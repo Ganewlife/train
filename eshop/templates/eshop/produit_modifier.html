@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Modifier — {{ produit.nom }}{% endblock %}
+{% block content %}
+
+<h4 class="mb-4"><i class="bi bi-pencil"></i> Modifier : {{ produit.nom }}</h4>
+
+{% if form.errors %}
+    <div class="alert alert-danger">{{ form.errors }}</div>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label>Nom produit</label>
+        {{ form.nom }}
+        <div class="text-danger">{{ form.nom.errors }}</div>
+    </div>
+
+    <div class="mb-3">
+        <label>Prix Unitaire</label>
+        {{ form.prix }}
+        <div class="text-danger">{{ form.prix.errors }}</div>
+    </div>
+
+    <div class="mb-3">
+        <label>Image produit</label>
+        <!-- Affiche l'image actuelle -->
+        {% if produit.image_url %}
+            <div class="mb-2">
+                <img src="{{ produit.image_url.url }}" style="width:100px;height:100px;object-fit:cover;" class="rounded">
+                <small class="text-muted d-block">Image actuelle</small>
+            </div>
+        {% endif %}
+        {{ form.image_url }}
+        <div class="form-text text-muted">Laisse vide pour conserver l'image actuelle.</div>
+        <div class="text-danger">{{ form.image_url.errors }}</div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-dark">
+            <i class="bi bi-check-lg"></i> Enregistrer
+        </button>
+        <a href="{% url 'produits' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-x-lg"></i> Annuler
+        </a>
+    </div>
+</form>
+
+{% endblock %}

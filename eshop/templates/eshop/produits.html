@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Produits{% endblock %}
+{% block content %}
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        {{ form.errors }}
+    </div>
+{% endif %}
+
+<!-- Formulaire de commande -->
+<form method="POST" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="nom">Nom produit</label>
+        {# <input type="text" name="nom" id="nom" class="form-control" required>#}
+        {{ form.nom }}
+        {{ form.carte_id }}
+        <div class="text-danger">
+            {{ form.nom.errors }}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="prenoms">Prix Unitaire</label>
+        {#<input type="text" name="prix" id="prix" class="form-control" required>#}
+        {{ form.prix }}
+        <div class="text-danger">
+            {{ form.prix.errors }}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="telephone">Image produit</label>
+        {# <input type="text" name="image_url" id="image_url" class="form-control" required> #}
+        {{ form.image_url }}
+        <div class="form-text text-muted">
+              JPG/PNG — sera redimensionnée automatiquement (max 800×600)
+            </div>
+        <div class="text-danger">
+            {{ form_user.image_url.errors }}
+        </div>
+
+    </div>
+
+    <button type="submit" class="btn btn-dark">
+        Enregistrer
+    </button>
+</form>
+
+
+<!-- Statistiques -->
+<div class="row mb-4 mt-4">
+    <div class="col-md-6">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">Nombre de produits</h6>
+                <h3 class="fw-bold">{{ total_produits }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">Montant total</h6>
+                <h3 class="fw-bold text-warning">{{ montant_total }} FCFA</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- List des produits client -->
+<h4 class="mb-4 mt-4"><i class="bi bi-receipt"></i>List des produits</h4>
+<div class="row g-3">
+  {% for p in produits %}
+
+  <div class="col-md-4 col-sm-6">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body text-center">
+
+        <h6 class="fw-bold mb-1">{{ p.nom }}</h6>
+        <p class="text-muted small mb-1">
+          <i class="bi bi-calendar"></i> {{ p.date_ajout }}
+        </p>
+
+      </div>
+      <div class="card-footer text-center bg-white border-0 pb-3">
+
+        <i class="bi bi-cart"></i><span class="text-warning"> {{ p.prix }} FCFA </span>
+
+        <br><br>
+        <img src="{{ p.image_url.url }}" class="rounded-circle mb-3" style="width:150px;height:150px;object-fit:cover;" alt="ID">
+        <div class="d-flex justify-content-center gap-2 mt-2">
+            <!-- Bouton Modifier -->
+            <a href="{% url 'produit_modifier' p.pk %}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+
+            <!-- Bouton Supprimer (formulaire POST pour sécurité) -->
+            <form method="POST" action="{% url 'produit_supprimer' p.pk %}"
+                onsubmit="return confirm('Supprimer ce produit ?')">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i> Supprimer
+                </button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+    <div class="col-12">
+      <div class="alert alert-info">Aucune commande active pour le moment.</div>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

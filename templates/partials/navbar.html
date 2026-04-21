@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">🚚 DeliveryApp</a>
+      <div class="ms-auto d-flex gap-2">
+        {% comment %}
+        {% if user.is_authenticated %}
+          <a href="{% url 'commande' %}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-box"></i> Commandes
+          </a>
+          {% if request.user.groups.all.0.name == "Client" %}
+          <a href="{% url 'livreur_list' %}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-truck"></i> Livreurs
+          </a>
+          {% endif %}
+          {% if request.user.is_superuser %}
+          <a href="{% url 'user_list' %}" class="btn btn-outline-info btn-sm">
+            <i class="bi bi-person-circle"></i> Users
+          </a>
+          {% endif %}
+          <a href="{% url 'user_detail' user.pk %}" class="btn btn-outline-info btn-sm">
+            <i class="bi bi-person-circle"></i> {{ request.user.nom }}
+          </a>
+          <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-box-arrow-right"></i> Déconnexion
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}"    class="btn btn-outline-light btn-sm">Connexion</a>
+          <a href="{% url 'client_register' %}" class="btn btn-warning btn-sm">Créer un compte</a>
+        {% endif %}
+        {% endcomment %}
+      </div>
+    </div>
+  </nav>
