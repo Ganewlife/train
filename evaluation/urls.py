@@ -20,9 +20,14 @@ from django.urls import path
 from django.conf.urls.static import static
 from django.urls import path, include
 import eshop.views
+import auth.views 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/login/',           auth.views.login_view,      name='login'),
+    path('logout/',          auth.views.logout_view,     name='logout'),
+    path('register/', auth.views.RegisterView.as_view(), name='register'),
+    
     path('', eshop.views.ProduitsView.as_view(), name='produits'),
     path('produits/<uuid:pk>/modifier/', eshop.views.ProduitModifierView.as_view(), name='produit_modifier'),
     path('produits/<uuid:pk>/supprimer/', eshop.views.ProduitSupprimerView.as_view(), name='produit_supprimer'),

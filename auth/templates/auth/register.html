@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Profil — {{ profile_user }}{% endblock %}
+{% block content %}
+<!-- {% for field in form %}
+    <div class="mb-3">
+        {{ field.label_tag }}
+        {{ field }}
+
+        {% if field.errors %}
+            <div class="text-danger">
+                {{ field.errors }}
+            </div>
+        {% endif %}
+    </div>
+{% endfor %} -->
+
+<!-- {% if message %}
+<div class="alert alert-danger">
+    {{ message }}
+</div>
+{% endif %}
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        {{ form.errors }}
+    </div>
+{% endif %}
+
+{% if form_user.errors %}
+<div class="alert alert-danger">
+    {{ form_user.errors }}
+</div>
+{% endif %} -->
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="nom">Nom</label>
+        <input type="text" name="nom" id="nom" class="form-control" required>
+        <div class="text-danger">
+            {{ form.nom.errors }}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="prenoms">Prénoms</label>
+        <input type="text" name="prenoms" id="prenoms" class="form-control" required>
+        <div class="text-danger">
+            {{ form.prenoms.errors }}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="telephone">Téléphone</label>
+        <input type="text" name="telephone" id="telephone" class="form-control" required>
+        <div class="text-danger">
+            {{ form_user.telephone.errors }}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="adresse">Adresse</label>
+        <input type="text" name="adresse" id="adresse" class="form-control">
+        <div class="text-danger">
+            {{ form.adresse.errors }}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="" for="password1">
+            Mot de passe
+        </label>
+        <input type="password" name="password1" id="password1" class="form-control">
+        <div class="text-danger">
+            {{ form_user.passwrd1.errors }}
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="" for="password2">
+            Confimer Mot de passe
+        </label>
+        <input type="password" name="password2" id="password2" class="form-control">
+        <div class="text-danger">
+            {{ form_user.password2.errors }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-dark">
+        Enregistrer
+    </button>
+</form>
+{% endblock %}
