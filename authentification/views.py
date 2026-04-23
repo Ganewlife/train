@@ -16,8 +16,7 @@ from . import models
 from . import forms
 import json
 
-User = get_user_model
-
+User = get_user_model()
 # Create your views here.
 class RegisterView(View):
     template_name = 'authentification/register.html'
@@ -28,7 +27,7 @@ class RegisterView(View):
         return render(request, self.template_name, context={'form': form, 'message': message})
 
     def post(self, request):
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, request.FILES)
 
         if form.is_valid():
             # new_user = form.save(commit=False)
@@ -37,7 +36,7 @@ class RegisterView(View):
                 # user.save() 
 
                 # login(request, user)# on connect l'utilisateur
-                return redirect('user_list')
+                return redirect('login')
             else:
                 message = 'erreur de données'
                 return render(request,self.template_name, context={'form': form,'message': message})
@@ -58,7 +57,7 @@ def login_view(request):
             return redirect('user_list')
         else:
             return redirect('commande') """
-        return redirect('user_list')
+        return redirect('produits')
     return render(request, 'authentification/login.html', {'form': form})
 
         
@@ -71,5 +70,29 @@ def logout_view(request):
 @login_required
 def user_list_view(request):
     # users = User.objects.filter(is_active=True).order_by('-creat_at')
-    users = User.objects.filter(is_active=True).select_related('client', 'livreur').order_by('-date_joined')
-    return render(request, 'deliveryapp/list.html', {'users': users})
+    users = User.objects.filter(is_active=True).order_by('-creat_at')
+    return render(request, 'authentification/users.html', {'users': users})
+
+
+@login_required
+def user_detail_view(request, pk):
+    profile_user = get_object_or_404(User, pk=pk)
+    form = None
+    form_class = forms.ProfileUpdateForm
+        
+
+    form = form_class(
+        request.POST or None,
+        request.FILES or None,
+        instance=profile_user
+    )
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, "Profil mis à jour avec succès !")
+        return redirect('user_detail', pk=pk)
+
+    return render(request, 'authentification/profil.html', {
+        'profile_user': profile_user,
+        'form': form,
+        'profil': profile_user,
+    })

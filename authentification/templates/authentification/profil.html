@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Profil — {{ profile_user }}{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-7">
+
+    <!-- Carte profil -->
+    <div class="card shadow mb-4">
+      <div class="card-body text-center py-4">
+        {% if profile_user.photo_url %}
+          <img src="{{ profile_user.photo_url.url }}"
+               class="rounded-circle mb-3 border border-3 border-dark"
+               style="width:110px;height:110px;object-fit:cover;" alt="ID">
+        {% else %}
+          <div class="rounded-circle bg-secondary d-inline-flex align-items-center
+                      justify-content-center mb-3 border border-3 border-dark"
+               style="width:110px;height:110px;">
+            <i class="bi bi-person-fill text-white" style="font-size:3rem;"></i>
+          </div>
+        {% endif %}
+
+        <h4 class="fw-bold">{{ profil.full_name }}</h4>
+        <p class="text-muted mb-1">
+          <i class="bi bi-envelope"></i> {{ profile_user.email }}
+        </p>
+
+        <p class="text-muted small mt-3">
+          Inscrit depuis : {{ profile_user.creat_at|date:"d/m/Y" }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Formulaire MAJ (visible uniquement par le propriétaire) -->
+    {% if form %}
+    <div class="card shadow">
+      <div class="card-header bg-dark text-white">
+        <h6 class="mb-0"><i class="bi bi-pencil-square"></i> Modifier mon profil</h6>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">{{ form.prenoms.label }}</label>
+              {{ form.prenoms }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.nom.label }}</label>
+            {{ form.nom }}
+          </div>
+          
+          <!-- Upload carte ID -->
+          <div class="mb-3">
+            <label class="form-label">
+              <i class="bi bi-card-image"></i> Photo
+            </label>
+            {{ form.photo_url }}
+            <div class="form-text text-muted">
+              JPG/PNG — sera redimensionnée automatiquement (max 800×600)
+            </div>
+            <div class="text-danger small">{{ form.photo_url.errors }}</div>
+          </div>
+
+          <button type="submit" class="btn btn-dark w-100">
+            <i class="bi bi-save"></i> Enregistrer les modifications
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

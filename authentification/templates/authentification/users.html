@@ -10,8 +10,8 @@
       <div class="card-body text-center">
 
         <!-- Avatar : carte_id ou placeholder -->
-        {% if u.carte_id %}
-          <img src="{{ u.carte_id.url }}" class="rounded-circle mb-3"
+        {% if u.photo_url %}
+          <img src="{{ u.photo_url.url }}" class="rounded-circle mb-3"
                style="width:80px;height:80px;object-fit:cover;" alt="ID">
         {% else %}
           <div class="rounded-circle bg-secondary d-inline-flex align-items-center
@@ -21,19 +21,24 @@
           </div>
         {% endif %}
 
-        {% if u.client %}
-        <h6 class="fw-bold mb-1">{{ u.client }}</h6>
-        {% elif u.livreur %}
-        <h6 class="fw-bold mb-1">{{ u.livreur }}</h6>
-        {% endif %}
+        <h6 class="fw-bold mb-1">{{ u.full_name }}</h6>
+
         <p class="text-muted small mb-1">
-          <i class="bi bi-telephone"></i> {{ u.telephone }}
+          <i class="bi bi-envelope"></i> {{ u.email }}
         </p>
 
-        {% if u.moyen_livraison %}
+        {% if u.is_staff %}
           <span class="badge bg-warning text-dark">
-            {{ u.get_moyen_livraison_display }}
+            Staff
           </span>
+
+          {% comment %}
+          {% else %}
+          <span class="badge bg-warning text-dark">
+            Client
+          </span>
+          {% endcomment %}
+
         {% endif %}
 
         {% if u.is_delivery %}

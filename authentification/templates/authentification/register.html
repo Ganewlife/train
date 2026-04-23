@@ -58,6 +58,16 @@
             {{ form.prenoms.errors }}
         </div>
     </div>
+    <div class="mb-3">
+        <label class="form-label">
+            <i class="bi bi-card-image"></i> Photo
+        </label>
+        {{ form.photo_url }}
+        <div class="form-text text-muted">
+            JPG/PNG — sera redimensionnée automatiquement (max 800×600)
+        </div>
+        <div class="text-danger small">{{ form.photo_url.errors }}</div>
+    </div>
 
     <div class="mb-3">
         <label class="" for="password1">

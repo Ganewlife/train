@@ -22,8 +22,29 @@ class UserManager(BaseUserManager):
 
         return self.create_user(telephone, password, **extra_fields) """
 
+    def create_user(self, email, password=None, **extra_fields):
+        if not email or email is None:
+            raise ValueError(_("L'email est obligatoire"))
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        
+        if not password or password is None:
+            raise TypeError("Mot de passe est obligatoire.")
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        if email is None:
+            raise TypeError("Superusers exige un email.")
+        if password is None:
+            raise TypeError("Mot de passe est obligatoire.")
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self.create_user(email, password, **extra_fields)
+
 class User(AbstractUser):
-    # username = models.CharField(max_length=60 , blank=True, null=True, unique=False)
+    username = None
     email = models.EmailField(max_length=100 , blank=True, null=True, unique=True)
     nom = models.CharField(max_length=50, blank=False, null=False)
     prenoms = models.CharField(max_length=65, blank=False, null=False)
@@ -36,6 +57,13 @@ class User(AbstractUser):
     is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email' 
-    REQUIRED_FIELDS = [] 
+    REQUIRED_FIELDS = ["nom", "prenoms"] 
     
     objects = UserManager()
+
+    @property
+    def full_name(self):
+        return f"{self.nom} {self.prenoms}"
+    
+    def __str__(self) -> str:
+        return self.nom+" "+self.prenoms

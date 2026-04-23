@@ -28,6 +28,7 @@ urlpatterns = [
     path('logout/',          views.logout_view,     name='logout'),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('users/',           views.user_list_view,  name='user_list'),
+    path('users/<int:pk>/',  views.user_detail_view, name='user_detail'),
     
     path('', eshop.views.ProduitsView.as_view(), name='produits'),
     path('produits/<uuid:pk>/modifier/', eshop.views.ProduitModifierView.as_view(), name='produit_modifier'),
