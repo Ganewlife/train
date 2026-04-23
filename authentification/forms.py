@@ -28,8 +28,8 @@ class SignupForm(UserCreationForm):
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
-        label="Téléphone",
-        widget=forms.TextInput(attrs={'class': BS, 'placeholder': '+229 XXXXXXXX'})
+        label="Email",
+        widget=forms.EmailInput(attrs={'class': BS, 'placeholder': 'abc123@gmail'})
     )
     password = forms.CharField(
         label="Mot de passe",

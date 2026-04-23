@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 from django.contrib.auth.models import BaseUserManager
@@ -22,8 +23,8 @@ class UserManager(BaseUserManager):
         return self.create_user(telephone, password, **extra_fields) """
 
 class User(AbstractUser):
-    username = None
-    username = models.CharField(max_length=60 , blank=True, null=True, unique=False)
+    # username = models.CharField(max_length=60 , blank=True, null=True, unique=False)
+    email = models.EmailField(max_length=100 , blank=True, null=True, unique=True)
     nom = models.CharField(max_length=50, blank=False, null=False)
     prenoms = models.CharField(max_length=65, blank=False, null=False)
     photo_url = models.ImageField(upload_to='photo/')

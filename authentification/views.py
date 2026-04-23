@@ -1,4 +1,7 @@
 from django.shortcuts import render
+
+# Create your views here.
+from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic import View, ListView, TemplateView
 from django.contrib.auth import login, authenticate, logout 
@@ -13,9 +16,11 @@ from . import models
 from . import forms
 import json
 
+User = get_user_model
+
 # Create your views here.
 class RegisterView(View):
-    template_name = 'auth/register.html'
+    template_name = 'authentification/register.html'
     form_class = forms.SignupForm
     def get(self, request):
         form = self.form_class()
@@ -32,11 +37,39 @@ class RegisterView(View):
                 # user.save() 
 
                 # login(request, user)# on connect l'utilisateur
-                return redirect('login')
+                return redirect('user_list')
             else:
                 message = 'erreur de données'
                 return render(request,self.template_name, context={'form': form,'message': message})
         else:
             message = 'Formulaire invalide'
             # print(form.errors)
-            return render(request, 'auth/register.html', context={'form': form,'message': message})
+            return render(request, 'authentification/register.html', context={'form': form,'message': message})
+        
+def login_view(request):
+    form = forms.LoginForm(data=request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        user = form.get_user()
+        login(request, user)
+        # messages.success(request, f"Bienvenue {user.nom} !")
+        messages.info(request, "Vous êtes déconnecté.")
+        
+        """ if request.user.is_superuser:
+            return redirect('user_list')
+        else:
+            return redirect('commande') """
+        return redirect('user_list')
+    return render(request, 'authentification/login.html', {'form': form})
+
+        
+@login_required
+def logout_view(request):
+    logout(request)
+    messages.info(request, "Vous êtes déconnecté.")
+    return redirect('login')
+
+@login_required
+def user_list_view(request):
+    # users = User.objects.filter(is_active=True).order_by('-creat_at')
+    users = User.objects.filter(is_active=True).select_related('client', 'livreur').order_by('-date_joined')
+    return render(request, 'deliveryapp/list.html', {'users': users})

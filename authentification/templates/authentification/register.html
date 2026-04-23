@@ -36,6 +36,14 @@
     {% csrf_token %}
 
     <div class="mb-3">
+        <label for="email">Email</label>
+        <input type="mail" name="email" id="email" class="form-control" required>
+        <div class="text-danger">
+            {{ form.email.errors }}
+        </div>
+    </div>
+
+    <div class="mb-3">
         <label for="nom">Nom</label>
         <input type="text" name="nom" id="nom" class="form-control" required>
         <div class="text-danger">
@@ -48,22 +56,6 @@
         <input type="text" name="prenoms" id="prenoms" class="form-control" required>
         <div class="text-danger">
             {{ form.prenoms.errors }}
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label for="telephone">Téléphone</label>
-        <input type="text" name="telephone" id="telephone" class="form-control" required>
-        <div class="text-danger">
-            {{ form_user.telephone.errors }}
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label for="adresse">Adresse</label>
-        <input type="text" name="adresse" id="adresse" class="form-control">
-        <div class="text-danger">
-            {{ form.adresse.errors }}
         </div>
     </div>
 
