@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from django.urls import path, include
 import eshop.views
 from authentification import views
+from django.contrib.auth.views import (PasswordChangeView, PasswordChangeDoneView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,6 +30,14 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     path('users/',           views.user_list_view,  name='user_list'),
     path('users/<int:pk>/',  views.user_detail_view, name='user_detail'),
+    path('change-password/', PasswordChangeView.as_view(
+        template_name='authentification/password_change_form.html'),
+         name='password_change'
+         ),
+    path('change-password-done/', PasswordChangeDoneView.as_view(
+        template_name='authentification/password_change_done.html'),
+         name='password_change_done'
+         ),
     
     path('', eshop.views.ProduitsView.as_view(), name='produits'),
     path('produits/<uuid:pk>/modifier/', eshop.views.ProduitModifierView.as_view(), name='produit_modifier'),

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "eshop",
     "authentification",
+    "widget_tweaks"
 ]
 
 MIDDLEWARE = [
