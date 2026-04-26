@@ -1,0 +1,206 @@
+{% extends "greenplay/base.html" %}
+{% block title %}Sécurité — StreamVault{% endblock %}
+
+{% block content %}
+<h4 class="mb-4"><i class="bi bi-shield-check me-2"></i>Tableau de bord — Sécurité</h4>
+
+<!-- Stats utilisateurs -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-4">
+    <div class="card shadow-sm text-center py-3">
+      <div class="card-body">
+        <i class="bi bi-people fs-2 text-primary"></i>
+        <h3 class="mt-2 fw-bold">{{ total_users }}</h3>
+        <p class="text-muted mb-0">Utilisateurs total</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card shadow-sm text-center py-3">
+      <div class="card-body">
+        <i class="bi bi-person-check fs-2 text-success"></i>
+        <h3 class="mt-2 fw-bold">{{ active_users }}</h3>
+        <p class="text-muted mb-0">Comptes actifs</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card shadow-sm text-center py-3">
+      <div class="card-body">
+        <i class="bi bi-shield-lock fs-2 text-warning"></i>
+        <h3 class="mt-2 fw-bold">{{ staff_users }}</h3>
+        <p class="text-muted mb-0">Administrateurs</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Paramètres de sécurité -->
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header fw-semibold">
+        <i class="bi bi-lock me-2"></i>Protection des accès
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for label, checked in security_settings %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span class="small">{{ label }}</span>
+          <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" {% if checked %}checked{% endif %}>
+          </div>
+        </li>
+        {% empty %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span class="small">Authentification à 2 facteurs (2FA)</span>
+          <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked></div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span class="small">Limite de tentatives de connexion</span>
+          <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked></div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span class="small">HTTPS forcé (HSTS)</span>
+          <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked></div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span class="small">Protection CSRF (Django)</span>
+          <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked></div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span class="small">Validation MIME à l'upload</span>
+          <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked></div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span class="small">Protection injection SQL (ORM)</span>
+          <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked></div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span class="small">Déconnexion auto (30 min)</span>
+          <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox"></div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Journal d'activité -->
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header fw-semibold">
+        <i class="bi bi-journal-text me-2"></i>Journal d'activité
+      </div>
+      {% if recent_logs %}
+      <ul class="list-group list-group-flush">
+        {% for log in recent_logs %}
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="badge me-1
+                {% if log.action_flag == 1 %}bg-success
+                {% elif log.action_flag == 2 %}bg-warning text-dark
+                {% else %}bg-danger{% endif %}">
+                {% if log.action_flag == 1 %}Ajout{% elif log.action_flag == 2 %}Modif.{% else %}Suppr.{% endif %}
+              </span>
+              <strong class="small">{{ log.user.username }}</strong>
+              <span class="text-muted small"> — {{ log.object_repr }}</span>
+            </div>
+            <small class="text-muted text-nowrap ms-2">{{ log.action_time|date:"d/m H:i" }}</small>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="card-body text-center text-muted py-4">
+        <i class="bi bi-journal-x fs-3 mb-2 d-block"></i>
+        Aucune activité enregistrée.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recherches récentes -->
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">
+        <i class="bi bi-clock-history me-2"></i>Recherches récentes
+      </div>
+      {% if recent_searches %}
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Requête</th>
+              <th>Résultats</th>
+              <th>Utilisateur</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in recent_searches %}
+            <tr>
+              <td class="small fw-semibold">{{ s.query }}</td>
+              <td><span class="badge bg-light text-dark border">{{ s.results_count }}</span></td>
+              <td class="small text-muted">{{ s.user.username|default:"anonyme" }}</td>
+              <td class="small text-muted">{{ s.searched_at|date:"d/m H:i" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="card-body text-muted small">Aucune recherche journalisée.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Matrice des permissions -->
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">
+        <i class="bi bi-person-badge me-2"></i>Permissions par rôle
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Permission</th>
+              <th class="text-center">Visiteur</th>
+              <th class="text-center">Utilisateur</th>
+              <th class="text-center">Éditeur</th>
+              <th class="text-center">Admin</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for perm, roles in perms_matrix %}
+            <tr>
+              <td class="small">{{ perm }}</td>
+              {% for allowed in roles %}
+              <td class="text-center">
+                {% if allowed %}
+                <i class="bi bi-check-circle-fill text-success"></i>
+                {% else %}
+                <i class="bi bi-x-circle text-muted"></i>
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% empty %}
+            <!-- Fallback statique -->
+            {% for row in "Voir les médias,Télécharger,Téléverser,Modifier,Supprimer,Gérer utilisateurs"|split:"," %}
+            <tr>
+              <td class="small">{{ row }}</td>
+              <td class="text-center"><i class="bi bi-{% if forloop.counter == 1 %}check-circle-fill text-success{% else %}x-circle text-muted{% endif %}"></i></td>
+              <td class="text-center"><i class="bi bi-{% if forloop.counter <= 2 %}check-circle-fill text-success{% else %}x-circle text-muted{% endif %}"></i></td>
+              <td class="text-center"><i class="bi bi-{% if forloop.counter <= 4 %}check-circle-fill text-success{% else %}x-circle text-muted{% endif %}"></i></td>
+              <td class="text-center"><i class="bi bi-check-circle-fill text-success"></i></td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

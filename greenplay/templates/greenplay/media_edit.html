@@ -1,0 +1,114 @@
+{% extends "greenplay/base.html" %}
+{% block title %}Modifier — {{ media.title }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'media:catalogue' %}">Catalogue</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'media:detail' media.slug %}">{{ media.title }}</a></li>
+    <li class="breadcrumb-item active">Modifier</li>
+  </ol>
+</nav>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h4 class="mb-4"><i class="bi bi-pencil me-2"></i>Modifier : {{ media.title }}</h4>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold">Métadonnées</div>
+        <div class="card-body">
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>
+          {% endif %}
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">{{ form.title.label }}</label>
+              {{ form.title }}
+              {% if form.title.errors %}<div class="text-danger small">{{ form.title.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">{{ form.media_type.label }}</label>
+              {{ form.media_type }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">{{ form.category.label }}</label>
+              {{ form.category }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">{{ form.author.label }}</label>
+              {{ form.author }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">{{ form.tags_input.label }}</label>
+              {{ form.tags_input }}
+              <div class="form-text">Séparez par des virgules</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">{{ form.production_date.label }}</label>
+              {{ form.production_date }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">{{ form.description.label }}</label>
+              {{ form.description }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">{{ form.visibility.label }}</label>
+              {{ form.visibility }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">{{ form.license.label }}</label>
+              {{ form.license }}
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Fichier actuel -->
+          <div class="alert alert-secondary d-flex align-items-center gap-3">
+            <i class="bi bi-file-earmark fs-4"></i>
+            <div>
+              <div class="fw-semibold">Fichier actuel</div>
+              <small class="text-muted">{{ media.file.name|slice:"7:" }} — {{ media.get_file_size_display }}</small>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Remplacer le fichier <span class="text-muted fw-normal">(optionnel)</span></label>
+            {{ form.file }}
+          </div>
+          <div class="mb-0">
+            <label class="form-label fw-semibold">{{ form.thumbnail.label }}</label>
+            {{ form.thumbnail }}
+            {% if media.thumbnail %}
+            <div class="mt-2">
+              <img src="{{ media.thumbnail.url }}" alt="miniature"
+                   class="rounded border" style="width:80px;height:54px;object-fit:cover">
+              <small class="text-muted ms-2">Miniature actuelle</small>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg me-1"></i>Enregistrer
+            </button>
+            <a href="{% url 'media:detail' media.slug %}" class="btn btn-outline-secondary">Annuler</a>
+          </div>
+          <form method="post" action="{% url 'media:delete' media.slug %}"
+                onsubmit="return confirm('Supprimer définitivement ce média ?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">
+              <i class="bi bi-trash me-1"></i>Supprimer
+            </button>
+          </form>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

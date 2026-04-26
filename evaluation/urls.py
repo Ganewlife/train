@@ -42,4 +42,6 @@ urlpatterns = [
     path('', eshop.views.ProduitsView.as_view(), name='produits'),
     path('produits/<uuid:pk>/modifier/', eshop.views.ProduitModifierView.as_view(), name='produit_modifier'),
     path('produits/<uuid:pk>/supprimer/', eshop.views.ProduitSupprimerView.as_view(), name='produit_supprimer'),
+    
+    path("play/", include("greenplay.urls")),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
