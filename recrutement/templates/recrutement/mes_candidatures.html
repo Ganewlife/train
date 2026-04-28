@@ -1,0 +1,60 @@
+{% extends "greenplay/base.html" %}
+{% block title %}Mes candidatures — ExpertWeb{% endblock %}
+
+{% block content %}
+<h4 class="mb-4"><i class="bi bi-person-check me-2"></i>Mes candidatures</h4>
+
+{% if candidatures %}
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Mission</th>
+          <th>Lieu</th>
+          <th>Période</th>
+          <th>Taux horaire</th>
+          <th class="text-center">Statut mission</th>
+          <th class="text-center">Ma candidature</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in candidatures %}
+        <tr>
+          <td class="fw-semibold">{{ c.mission.titre }}</td>
+          <td class="text-muted small"><i class="bi bi-geo-alt me-1"></i>{{ c.mission.lieu }}</td>
+          <td class="text-muted small">
+            {{ c.mission.date_debut|date:"d/m/Y" }}<br>→ {{ c.mission.date_fin|date:"d/m/Y" }}
+          </td>
+          <td class="text-success fw-semibold small">{{ c.mission.taux_horaire|floatformat:0 }} CFA/h</td>
+          <td class="text-center">
+            <span class="badge bg-{{ c.mission.statut_badge }}">{{ c.mission.get_statut_display }}</span>
+          </td>
+          <td class="text-center">
+            <span class="badge
+              {% if c.statut == 'acceptee' %}bg-success
+              {% elif c.statut == 'refusee' %}bg-danger
+              {% else %}bg-secondary{% endif %}">
+              {{ c.get_statut_display }}
+            </span>
+          </td>
+          <td>
+            <a href="{% url 'recrutement:detail' c.mission.pk %}" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-eye"></i> Voir
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+  <i class="bi bi-inbox text-muted" style="font-size:3rem"></i>
+  <h5 class="mt-3 text-muted">Vous n'avez postulé à aucune mission.</h5>
+  <a href="{% url 'recrutement:liste' %}" class="btn btn-outline-primary mt-2">Voir les missions disponibles</a>
+</div>
+{% endif %}
+{% endblock %}

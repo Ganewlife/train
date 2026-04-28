@@ -1,0 +1,56 @@
+{% extends "greenplay/base.html" %}
+{% block title %}Compétences — ExpertWeb{% endblock %}
+
+{% block content %}
+<h4 class="mb-4"><i class="bi bi-tags me-2"></i>Répertoire des compétences</h4>
+
+<div class="row g-4">
+  <!-- Formulaire ajout -->
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Ajouter une compétence</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">{{ form.nom.label }}</label>
+            {{ form.nom }}
+            {% if form.nom.errors %}<div class="text-danger small mt-1">{{ form.nom.errors.0 }}</div>{% endif %}
+          </div>
+          <button type="submit" class="btn btn-warning w-100">
+            <i class="bi bi-plus-lg me-1"></i>Ajouter
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste compétences -->
+  <div class="col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold d-flex justify-content-between">
+        <span>Compétences disponibles</span>
+        <span class="badge bg-secondary">{{ competences.count }}</span>
+      </div>
+      {% if competences %}
+      <ul class="list-group list-group-flush">
+        {% for c in competences %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-tag me-2 text-muted"></i>{{ c.nom }}</span>
+          <form method="post" action="{% url 'recrutement:supprimer_competence' c.pk %}"
+                onsubmit="return confirm('Supprimer « {{ c.nom }} » ?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="card-body text-center text-muted">Aucune compétence enregistrée.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
